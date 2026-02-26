@@ -11,7 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Api\" />
+      <Folder Include="Api\Controllers\" />
+      <Folder Include="Api\Extentions\" />
+      <Folder Include="Api\Middleware\" />
+      <Folder Include="Api\Models\" />
       <Folder Include="Core\" />
       <Folder Include="Infractructure\" />
     </ItemGroup>
