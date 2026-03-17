@@ -17,7 +17,9 @@
       <Folder Include="Api\Extentions\" />
       <Folder Include="Api\Middleware\" />
       <Folder Include="Api\Models\" />
-      <Folder Include="Infractructure\" />
+      <Folder Include="Infractructure\Data\Migrations\" />
+      <Folder Include="Infractructure\Logging\" />
+      <Folder Include="Infractructure\Services\" />
     </ItemGroup>
 
 </Project>
