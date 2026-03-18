@@ -1,4 +1,7 @@
+using JobPortalAPI.Infractructure;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +39,9 @@ builder.Services.AddSwaggerGen(c =>
     // Prevents from schemas duplicating [public class Model is used twice etc.]
     c.CustomSchemaIds(type => type.FullName!.Replace('+', '.'));
 });
+
+builder.Services.AddDbContext<JobPortalContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
