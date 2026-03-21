@@ -24,4 +24,6 @@ public class CandidateProfile
     public int YearsOfExperience { get; set; }
     
     public virtual ICollection<CandidateSkill> CandidateSkills { get; set; } = new List<CandidateSkill>();
+    
+    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
 }

@@ -17,6 +17,10 @@ public class EmployerProfile
     [Column("company_name")]
     public string CompanyName { get; set; } = string.Empty;
     [Required]
+    [Column("contact_email")]
+    public string ContactEmail { get; set; } = string.Empty;
     [Column("location")]
     public string Location { get; set; } = string.Empty;
+    
+    public virtual ICollection<JobPosting> JobPostings { get; set; } = new List<JobPosting>();
 }

@@ -14,4 +14,6 @@ public class Skill
     public string Name { get; set; } = string.Empty;
     
     public  virtual ICollection<CandidateSkill> CandidateSkills { get; set; } = new List<CandidateSkill>();
+    
+    public virtual ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
 }
