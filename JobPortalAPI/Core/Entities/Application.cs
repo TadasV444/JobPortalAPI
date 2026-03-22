@@ -10,7 +10,7 @@ public class Application
     [Column("id")]
     public int Id { get; set; }
     [Required]
-    [Column("")]
+    [Column("candidate_profile_id")]
     public int CandidateProfileId { get; set; }
     [Required]
     [Column("job_posting_id")]
