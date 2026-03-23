@@ -21,7 +21,8 @@
       <Folder Include="Api\Controllers\" />
       <Folder Include="Api\Extentions\" />
       <Folder Include="Api\Middleware\" />
-      <Folder Include="Api\Models\" />
+      <Folder Include="Api\Models\Responses\" />
+      <Folder Include="Api\Models\Tokens\" />
       <Folder Include="Infrastructure\Logging\" />
       <Folder Include="Infrastructure\Services\" />
     </ItemGroup>
