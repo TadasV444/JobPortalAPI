@@ -15,7 +15,7 @@ public class JobSkill
     [Required]
     [Column("skill_id")]
     public int SkillId { get; set; }
-    
+    // Navigation Property
     public JobPosting JobPosting { get; set; } = null!;
     
     public Skill Skill { get; set; } = null!;

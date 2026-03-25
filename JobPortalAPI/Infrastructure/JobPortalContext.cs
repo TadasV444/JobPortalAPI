@@ -5,6 +5,7 @@ namespace JobPortalAPI.Infractructure;
 
 public class JobPortalContext(DbContextOptions <JobPortalContext> options) :DbContext(options)
 {
+    public DbSet<User> Users { get; set; }
     public DbSet<CandidateProfile> CandidateProfiles { get; set; }
     public DbSet<CandidateSkill> CandidateSkills { get; set; }
     public DbSet<EmployerProfile> EmployerProfiles { get; set; }
@@ -58,6 +59,19 @@ public class JobPortalContext(DbContextOptions <JobPortalContext> options) :DbCo
                 .WithOne(a => a.CandidateProfile)
                 .HasForeignKey(a => a.CandidateProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
+        //User -> CandidateProfile
+            modelBuilder.Entity<User>()
+                .HasOne(u  => u.CandidateProfile)
+                .WithOne(c => c.User)
+                .HasForeignKey<CandidateProfile>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        //User -> EmployerProfile
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.EmployerProfile)
+                .WithOne(e => e.User)
+                .HasForeignKey<EmployerProfile>(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
         #endregion
         
         #region Indexes
