@@ -18,9 +18,9 @@ public class JobPosting
     [Required]
     [Column("title")]
     public string Title { get; set; } = string.Empty;
-
+    // Navigation Property
     public EmployerProfile EmployerProfile { get; set; } = null!;
-    
+    // Collection Navigation Property
     public virtual ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
     
     public virtual ICollection<Application> Applications { get; set; } = new List<Application>();

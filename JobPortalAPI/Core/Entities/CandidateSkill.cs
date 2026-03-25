@@ -19,7 +19,7 @@ public class CandidateSkill
     [Required]
     [Column("skill_id")]
     public int SkillId { get; set; }
-
+    // Navigation Property
     public Skill Skill { get; set; } = null!;
 
 

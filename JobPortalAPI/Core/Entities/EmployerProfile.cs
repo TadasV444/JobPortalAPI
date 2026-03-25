@@ -21,6 +21,10 @@ public class EmployerProfile
     public string ContactEmail { get; set; } = string.Empty;
     [Column("location")]
     public string Location { get; set; } = string.Empty;
+    [Required]
+    [Column("user")]
+    // Navigation Property
+    public User User { get; set; } = null!;
     
     public virtual ICollection<JobPosting> JobPostings { get; set; } = new List<JobPosting>();
 }
