@@ -26,7 +26,7 @@ public class CandidateProfile
     [Column("user")]
     // Navigation Property
     public User User { get; set; } = null!;
-    
+    // Collection of Navigation Properties
     public virtual ICollection<CandidateSkill> CandidateSkills { get; set; } = new List<CandidateSkill>();
     
     public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
