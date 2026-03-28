@@ -19,7 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Api\Extentions\" />
       <Folder Include="Api\Middleware\" />
       <Folder Include="Api\Models\Tokens\" />
       <Folder Include="Core\Helpers\" />
