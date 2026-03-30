@@ -33,19 +33,21 @@ public class AuthService(JobPortalContext context, IConfiguration configuration)
             CreatedAt = DateTime.UtcNow
         };
         
+        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+        
         var candidateProfile = new CandidateProfile
         {
-            UserId = user.Id,
+            User = user,
             Summary = request.Summary,
             Location = request.Location,
             YearsOfExperience = request.YearsOfExperience
         };
-
+        
         context.CandidateProfiles.Add(candidateProfile);
         await context.SaveChangesAsync();
         
-        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
-        context.Add(user);
+        
+        
         
         return new AuthResponse
         {
@@ -78,15 +80,11 @@ public class AuthService(JobPortalContext context, IConfiguration configuration)
             CreatedAt = DateTime.UtcNow
         };
 
-        var hasher = new PasswordHasher<User>();
-        user.PasswordHash = hasher.HashPassword(user, request.Password);
-
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
 
         var employerProfile = new EmployerProfile
         {
-            UserId = user.Id,
+            User = user,
             CompanyName = request.CompanyName,
             ContactEmail = email!,
             Location = request.Location
