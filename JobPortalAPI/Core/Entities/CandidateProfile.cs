@@ -22,8 +22,6 @@ public class CandidateProfile
     [Required]
     [Column("years_of_experience")]
     public int YearsOfExperience { get; set; }
-    [Required]
-    [Column("user")]
     // Navigation Property
     public User User { get; set; } = null!;
     // Collection of Navigation Properties

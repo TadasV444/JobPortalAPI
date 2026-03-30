@@ -1,4 +1,6 @@
+using JobPortalAPI.Core.Interfaces;
 using JobPortalAPI.Infractructure;
+using JobPortalAPI.Infractructure.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +42,7 @@ builder.Services.AddSwaggerGen(c =>
     c.CustomSchemaIds(type => type.FullName!.Replace('+', '.'));
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<JobPortalContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
