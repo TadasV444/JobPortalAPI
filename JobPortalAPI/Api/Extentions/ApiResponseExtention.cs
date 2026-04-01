@@ -6,7 +6,7 @@ namespace JobPortalAPI.Api.Extentions;
 public static class ApiResponseExtention
 {
     // BadRequest (400)
-    public static ActionResult<ApiResponse<T?>> BadRequestResponse<T>(
+    public static ActionResult<ApiResponse<T>> BadRequestResponse<T>(
         this ControllerBase controller,
         string message,
         List<string>? errors = null)
@@ -21,7 +21,7 @@ public static class ApiResponseExtention
     }
     
     // Unauthorized (401)
-    public static ActionResult<ApiResponse<T?>> UnauthorizedResponse<T>(
+    public static ActionResult<ApiResponse<T>> UnauthorizedResponse<T>(
         this ControllerBase controller,
         string message,
         List<string>? errors = null)
@@ -35,7 +35,7 @@ public static class ApiResponseExtention
     }
     
     // Forbidden (403)
-    public static ActionResult<ApiResponse<T?>> ForbiddenResponse<T>(
+    public static ActionResult<ApiResponse<T>> ForbiddenResponse<T>(
         this ControllerBase controller,
         string message,
         List<string>? errors = null)
@@ -51,7 +51,7 @@ public static class ApiResponseExtention
     }
     
     // NotFound (404)
-    public static ActionResult<ApiResponse<T?>> NotFoundResponse<T>(
+    public static ActionResult<ApiResponse<T>> NotFoundResponse<T>(
         this ControllerBase controller,
         string message,
         List<string>? errors = null)
@@ -66,7 +66,7 @@ public static class ApiResponseExtention
     }
     
     // Conflict (409)
-    public static ActionResult<ApiResponse<T?>> ConflictResponse<T>(
+    public static ActionResult<ApiResponse<T>> ConflictResponse<T>(
         this ControllerBase controller,
         string message,
         List<string>? errors = null)
@@ -80,10 +80,10 @@ public static class ApiResponseExtention
         );
     }
     // InternalServerError (500)
-    public static ActionResult<ApiResponse<T?>> InternalServerErrorResponse<T>(
+    public static ActionResult<ApiResponse<T>> InternalServerErrorResponse<T>(
         this ControllerBase controller,
         string message,
-        List<String>? errors = null)
+        List<string>? errors = null)
     {
         return controller.StatusCode(
             StatusCodes.Status500InternalServerError,

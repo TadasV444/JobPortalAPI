@@ -43,6 +43,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICandidatesService, CandidatesService>();
+builder.Services.AddScoped<IEmployersService, EmployersService>();
+
 builder.Services.AddDbContext<JobPortalContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
