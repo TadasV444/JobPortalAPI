@@ -14,7 +14,7 @@ namespace JobPortalAPI.Api.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register-candidate")]
-    public async Task<ActionResult<ApiResponse<AuthResponse?>>> RegisterCandidate(RegisterCandidateRequest request)
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> RegisterCandidate(RegisterCandidateRequest request)
     {
         var authResponse = await authService.RegisterCandidateAsync(request);
 
@@ -30,7 +30,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("register-employer")]
-    public async Task<ActionResult<ApiResponse<AuthResponse?>>> RegisterEmployer(RegisterEmployerRequest request)
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> RegisterEmployer(RegisterEmployerRequest request)
     {
         var authResponse = await authService.RegisterEmployerAsync(request);
 
@@ -47,7 +47,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<AuthResponse?>>> Login(LoginRequest request)
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(LoginRequest request)
     {
         var authResponse = await authService.LoginAsync(request);
 
