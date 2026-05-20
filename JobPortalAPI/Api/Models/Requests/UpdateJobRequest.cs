@@ -7,4 +7,6 @@ public class UpdateJobRequest
     public string? Location { get; set; }
     public decimal? SalaryFrom { get; set; }
     public decimal? SalaryTo { get; set; }
+    
+    public List<int>? SkillIds { get; set; }
 }
