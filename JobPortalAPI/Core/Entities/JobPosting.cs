@@ -14,10 +14,22 @@ public class JobPosting
     public int EmployerProfileId { get; set; }
     [Required]
     [Column("job_description")]
+    [StringLength(250)]
     public string JobDescription { get; set; } = string.Empty;
+    [StringLength(120)]
     [Required]
     [Column("title")]
     public string Title { get; set; } = string.Empty;
+    [StringLength(120)]
+    [Required]
+    [Column("location")]
+    public string Location { get; set; } = string.Empty;
+    [Required]
+    [Column("salary_fron")]
+    public decimal? SalaryFrom { get; set; }
+    [Required]
+    [Column("salary_to")]
+    public decimal? SalaryTo { get; set; }
     // Navigation Property
     public EmployerProfile EmployerProfile { get; set; } = null!;
     // Collection Navigation Property
