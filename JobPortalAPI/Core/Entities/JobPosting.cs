@@ -25,7 +25,7 @@ public class JobPosting
     [Column("location")]
     public string Location { get; set; } = string.Empty;
     [Required]
-    [Column("salary_fron")]
+    [Column("salary_from")]
     public decimal? SalaryFrom { get; set; }
     [Required]
     [Column("salary_to")]
