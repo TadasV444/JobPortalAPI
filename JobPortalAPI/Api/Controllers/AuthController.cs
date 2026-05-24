@@ -4,6 +4,7 @@ using JobPortalAPI.Api.Models.Responses;
 using JobPortalAPI.Core.Entities;
 using JobPortalAPI.Core.Interfaces;
 using JobPortalAPI.Infractructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,18 +48,46 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(LoginRequest request)
+    public async Task<ActionResult<ApiResponse<TokenResponse>>> Login(LoginRequest request)
     {
-        var authResponse = await authService.LoginAsync(request);
+        var tokenResponse = await authService.LoginAsync(request);
 
-        if (authResponse is null)
+        if (tokenResponse is null)
         {
-            return this.BadRequestResponse<AuthResponse>(
+            return this.UnauthorizedResponse<TokenResponse>(
                 message: " User already logged in ",
                 errors: ["User already exists"]
             );
         }
-        return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse, "User logged in successfully"));
+        return Ok(ApiResponse<TokenResponse>.CreateSuccess(tokenResponse, "User logged in successfully"));
     }
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<ApiResponse<TokenResponse>>> RefreshToken(RefreshTokenRequest request)
+    {
+        var result = await authService.RefreshTokenAsync(request);
+        if (result is null)
+        {
+            return this.UnauthorizedResponse<TokenResponse>(
+                message: "Invalid refresh token",
+                errors: ["The provided refresh token is invalid or expired"]
+            );
+        }
+
+        return Ok(ApiResponse<TokenResponse>.CreateSuccess(
+            data: result,
+            message: "Token refreshed successfully"
+        ));
+    }
+
+    [Authorize]
+    [HttpGet("authenticated")]
+    public ActionResult<ApiResponse<string>> AuthenticatedOnlyEndpoint()
+    {
+        return Ok(ApiResponse<string>.CreateSuccess(
+            data: "authenticated",
+            message: "Successfully accessed authenticated endpoint"
+        ));
+    }
+    
     
 }

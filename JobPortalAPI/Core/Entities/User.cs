@@ -20,6 +20,13 @@ public class User
     public Role Role { get; set; }
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [Column("last_login")]
+    public DateTime? LastLogin { get; set; }
+    [Column("refresh_token")]
+    [StringLength(120)]
+    public string RefreshToken { get; set; } = string.Empty;
+    [Column("refresh_token_expiration_date")]
+    public DateTime? RefreshTokenExpirationDate { get; set; }
     //Reverse Navigation 
     public CandidateProfile? CandidateProfile { get; set; }
     
