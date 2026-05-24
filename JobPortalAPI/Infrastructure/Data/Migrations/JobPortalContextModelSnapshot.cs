@@ -275,10 +275,24 @@ namespace JobPortalAPI.Infrastructure.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email");
 
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_login");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("refresh_token");
+
+                    b.Property<DateTime?>("RefreshTokenExpirationDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("refresh_token_expiration_date");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer")

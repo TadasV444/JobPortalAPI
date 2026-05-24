@@ -7,5 +7,6 @@ public interface IAuthService
 {
     Task<AuthResponse?> RegisterCandidateAsync(RegisterCandidateRequest request);
     Task<AuthResponse?> RegisterEmployerAsync(RegisterEmployerRequest request);
-    Task<AuthResponse?> LoginAsync(LoginRequest request);
+    Task<TokenResponse?> LoginAsync(LoginRequest request);
+    Task<TokenResponse?> RefreshTokenAsync(RefreshTokenRequest request);
 }
