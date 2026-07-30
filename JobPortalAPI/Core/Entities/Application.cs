@@ -19,6 +19,10 @@ public class Application
     [Column("applied_date")]
     public DateTime AppliedDate { get; set; }
     [Required]
+    [Column("cover_letter")]
+    [MaxLength(250)]
+    public string? CoverLetter { get; set; }
+    [Required]
     [Column("status")]
     public string Status { get; set; } = string.Empty;
     

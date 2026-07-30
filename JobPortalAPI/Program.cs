@@ -66,6 +66,7 @@ builder.Services.AddScoped<ICandidatesService, CandidatesService>();
 builder.Services.AddScoped<IEmployersService, EmployersService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 builder.Services.AddDbContext<JobPortalContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
