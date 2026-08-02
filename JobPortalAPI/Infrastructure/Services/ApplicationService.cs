@@ -40,6 +40,7 @@ public class ApplicationService(JobPortalContext context) : IApplicationService
             CandidateProfileId = candidateProfile.Id,
             JobPostingId = jobPosting.Id,
             AppliedDate = DateTime.UtcNow,
+            CoverLetter = request.CoverLetter,
             Status = nameof(ApplicationStatus.Pending)
         };
 

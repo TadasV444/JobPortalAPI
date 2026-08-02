@@ -14,7 +14,7 @@ namespace JobPortalAPI.Api.Controllers;
 [ApiController]
 public class ApplicationsController(IApplicationService applicationService) : ControllerBase
 {   
-    [Authorize(Roles = "Employer")]
+    [Authorize(Roles = "Candidate")]
     [HttpPost("create-job-application")]
     public async Task<ActionResult<ApiResponse<ApplicationResponse>>> CreateApplication(ApplicationRequest request)
     {
