@@ -28,7 +28,6 @@
     <ItemGroup>
       <Folder Include="Api\Middleware\" />
       <Folder Include="Api\Models\Tokens\" />
-      <Folder Include="Core\Helpers\" />
       <Folder Include="Infrastructure\Logging\" />
     </ItemGroup>
 
