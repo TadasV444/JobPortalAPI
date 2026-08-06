@@ -2,6 +2,7 @@
 using JobPortalAPI.Api.Models.Requests;
 using JobPortalAPI.Api.Models.Responses;
 using JobPortalAPI.Core.Entities;
+using JobPortalAPI.Core.Enums;
 using JobPortalAPI.Core.Interfaces;
 using JobPortalAPI.Infractructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,23 +14,25 @@ namespace JobPortalAPI.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ApplicationsController(IApplicationService applicationService) : ControllerBase
-{   
+{
     [Authorize(Roles = "Candidate")]
     [HttpPost("create-job-application")]
     public async Task<ActionResult<ApiResponse<ApplicationResponse>>> CreateApplication(ApplicationRequest request)
     {
         var userId = this.GetUserId();
-        var applicationResponse = await applicationService.CreateApplicationAsync(userId, request);
+        var result = await applicationService.CreateApplicationAsync(userId, request);
 
-        if (applicationResponse is null)
+        if (!result.IsSuccess)
         {
-            return this.BadRequestResponse<ApplicationResponse>(
-                message: "Application not found",
-                errors: ["Application is not created"]
-            );
+            return result.ErrorType switch
+            {
+                ServiceErrorType.NotFound => this.NotFoundResponse<ApplicationResponse>(result.ErrorMessage!),
+                ServiceErrorType.Conflict => this.ConflictResponse<ApplicationResponse>(result.ErrorMessage!),
+                _ => this.BadRequestResponse<ApplicationResponse>(result.ErrorMessage!)
+            };
         }
 
-        return Ok(ApiResponse<ApplicationResponse>.CreateSuccess(applicationResponse, "Application created"));
+        return Ok(ApiResponse<ApplicationResponse>.CreateSuccess(result.Data!, "Application created"));
     }
 
     [Authorize(Roles = "Candidate")]
@@ -39,7 +42,8 @@ public class ApplicationsController(IApplicationService applicationService) : Co
         var userId = this.GetUserId();
         var candidateApplications = await applicationService.GetApplicationsForCandidateAsync(userId);
 
-        return Ok(ApiResponse<List<ApplicationResponse>>.CreateSuccess(candidateApplications,"Candidate application retrieved"));
+        return Ok(ApiResponse<List<ApplicationResponse>>.CreateSuccess(candidateApplications,
+            "Candidate application retrieved"));
     }
 
     [Authorize(Roles = "Employer")]
@@ -49,7 +53,8 @@ public class ApplicationsController(IApplicationService applicationService) : Co
         var userId = this.GetUserId();
         var employerApplications = await applicationService.GetApplicationsForEmployerAsync(userId);
 
-        return Ok(ApiResponse<List<ApplicationResponse>>.CreateSuccess(employerApplications, "Employer application retrieved"));
+        return Ok(ApiResponse<List<ApplicationResponse>>.CreateSuccess(employerApplications,
+            "Employer application retrieved"));
     }
 
 
@@ -59,7 +64,7 @@ public class ApplicationsController(IApplicationService applicationService) : Co
     {
         var userId = this.GetUserId();
         var getApplications = await applicationService.GetApplicationByIdAsync(applicationId, userId);
-        
+
         if (getApplications is null)
         {
             return this.BadRequestResponse<ApplicationResponse>(
@@ -67,8 +72,45 @@ public class ApplicationsController(IApplicationService applicationService) : Co
                 errors: ["Unable to find application"]
             );
         }
-        
+
         return Ok(ApiResponse<ApplicationResponse>.CreateSuccess(getApplications, "Application by Id is retrieved"));
-        
+    }
+
+    [Authorize(Roles = "Candidate")]
+    [HttpPut("withdraw-from-application")]
+    public async Task<ActionResult<ApiResponse<bool>>> WithdrawFromApplicationByUser(int applicationId)
+    {
+        var userId = this.GetUserId();
+
+        var result = await applicationService.WithdrawApplicationAsync(applicationId, userId);
+
+        if (!result.IsSuccess)
+        {
+            return result.ErrorType switch
+            {
+                ServiceErrorType.NotFound => this.NotFoundResponse<bool>(result.ErrorMessage!),
+                ServiceErrorType.Conflict => this.ConflictResponse<bool>(result.ErrorMessage!),
+                _ => this.BadRequestResponse<bool>(result.ErrorMessage!)
+            };
+        }
+
+        return Ok(ApiResponse<bool>.CreateSuccess(true, "Successfully withdrawn from application"));
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("delete-application")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteApplication(int applicationId)
+    {
+        var applicationDeleted = await applicationService.DeleteApplicationAsync(applicationId);
+
+        if (!applicationDeleted)
+        {
+            return this.NotFoundResponse<bool>(
+                message: "Application not found",
+                errors: new List<string> { $"Application with application id {applicationId} was not found." }
+            );
+        }
+
+        return Ok(ApiResponse<bool>.CreateSuccess(applicationDeleted, "Application deleted successfully"));
     }
 }
