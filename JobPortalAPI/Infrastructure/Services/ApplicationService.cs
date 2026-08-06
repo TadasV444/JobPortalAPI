@@ -2,6 +2,7 @@
 using JobPortalAPI.Api.Models.Responses;
 using JobPortalAPI.Core.Entities;
 using JobPortalAPI.Core.Enums;
+using JobPortalAPI.Core.Helpers;
 using JobPortalAPI.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,31 +10,27 @@ namespace JobPortalAPI.Infractructure.Services;
 
 public class ApplicationService(JobPortalContext context) : IApplicationService
 {
-    public async Task<ApplicationResponse?> CreateApplicationAsync(int userId, ApplicationRequest request)
+    public async Task<ServiceResult<ApplicationResponse>> CreateApplicationAsync(int userId, ApplicationRequest request)
     {
         var candidateProfile = await context.CandidateProfiles
             .FirstOrDefaultAsync(c => c.UserId == userId);
 
         if (candidateProfile == null)
-        {
-            return null;
-        }
+            return ServiceResult<ApplicationResponse>.Fail(ServiceErrorType.NotFound, "Candidate profile not found");
 
         var jobPosting = await context.JobPostings
             .FirstOrDefaultAsync(j => j.Id == request.JobPostingId);
 
         if (jobPosting == null)
-        {
-            return null;
-        }
+            return ServiceResult<ApplicationResponse>.Fail(ServiceErrorType.NotFound, "Job posting not found");
+
 
         var duplicatesApplication = await context.Applications
             .AnyAsync(a => a.CandidateProfileId == candidateProfile.Id && a.JobPostingId == jobPosting.Id);
 
         if (duplicatesApplication)
-        {
-            return null;
-        }
+            return ServiceResult<ApplicationResponse>.Fail(ServiceErrorType.Conflict,
+                "You have already applied to this job");
 
         var application = new Application()
         {
@@ -47,7 +44,7 @@ public class ApplicationService(JobPortalContext context) : IApplicationService
         context.Applications.Add(application);
         await context.SaveChangesAsync();
 
-        return await context.Applications
+        var response = await context.Applications
             .Where(a => a.Id == application.Id)
             .Select(c => new ApplicationResponse
             {
@@ -71,6 +68,8 @@ public class ApplicationService(JobPortalContext context) : IApplicationService
                 Skills = c.JobPosting.JobSkills.Select(js => js.Skill.Name).ToList()
             })
             .FirstOrDefaultAsync();
+
+        return ServiceResult<ApplicationResponse>.Ok(response!);
     }
 
     public async Task<List<ApplicationResponse>> GetApplicationsForCandidateAsync(int userId)
@@ -158,25 +157,37 @@ public class ApplicationService(JobPortalContext context) : IApplicationService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Boolean> WithdrawApplicationAsync(int applicationId, int userId)
+    public async Task<ServiceResult<Boolean>> WithdrawApplicationAsync(int applicationId, int userId)
     {
         var application = await context.Applications
             .FirstOrDefaultAsync(a => a.Id == applicationId && a.CandidateProfile.UserId == userId);
+
+        if (application == null)
+            return ServiceResult<bool>.Fail(ServiceErrorType.NotFound, "Application not found");
+
+        if (application.Status is not (nameof(ApplicationStatus.Pending) or nameof(ApplicationStatus.Reviewed)
+            or nameof(ApplicationStatus.Approved)))
+            return ServiceResult<bool>.Fail(ServiceErrorType.Conflict,
+                "Only pending, reviewed or approved applications can be withdrawn from");
+
+        application.Status = nameof(ApplicationStatus.Withdrawn);
+        await context.SaveChangesAsync();
+
+        return ServiceResult<bool>.Ok(true);
+    }
+
+    public async Task<bool> DeleteApplicationAsync(int applicationId)
+    {
+        var application = await context.Applications
+            .FirstOrDefaultAsync(a => a.Id == applicationId);
 
         if (application == null)
         {
             return false;
         }
 
-        if (application.Status == nameof(ApplicationStatus.Approved)
-            || application.Status == nameof(ApplicationStatus.Rejected))
-        {
-            return false;
-        }
-
-        application.Status = nameof(ApplicationStatus.Withdrawn);
+        context.Applications.Remove(application);
         await context.SaveChangesAsync();
-
         return true;
     }
 }
