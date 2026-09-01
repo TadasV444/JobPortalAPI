@@ -206,4 +206,17 @@ public class AuthService(JobPortalContext context, IConfiguration configuration)
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
+
+    public async Task<User?> CreateAdminAsync(string email, string password)
+    {
+        email = email.Trim().ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@')) return null;
+        if (await context.Users.AnyAsync(u => u.Email == email)) return null;
+
+        var user = new User { Email = email, Role = Role.Admin, CreatedAt = DateTime.UtcNow };
+        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+        return user;
+    }
 }
