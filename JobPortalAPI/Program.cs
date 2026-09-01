@@ -1,4 +1,5 @@
 using System.Text;
+using JobPortalAPI.Core.Enums;
 using JobPortalAPI.Core.Interfaces;
 using JobPortalAPI.Infractructure;
 using JobPortalAPI.Infractructure.Services;
@@ -72,6 +73,23 @@ builder.Services.AddDbContext<JobPortalContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<JobPortalContext>();
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    if (!await db.Users.AnyAsync(u => u.Role == Role.Admin))
+    {
+        var email = config["AdminSeed:Email"];
+        var password = config["AdminSeed:Password"];
+
+        if (!string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(password))
+        {
+            await authService.CreateAdminAsync(email, password);
+        }
+    }
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();
