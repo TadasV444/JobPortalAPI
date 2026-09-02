@@ -6,6 +6,7 @@ using JobPortalAPI.Api.Models.Requests;
 using JobPortalAPI.Api.Models.Responses;
 using JobPortalAPI.Core.Entities;
 using JobPortalAPI.Core.Enums;
+using JobPortalAPI.Core.Helpers;
 using JobPortalAPI.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -207,16 +208,28 @@ public class AuthService(JobPortalContext context, IConfiguration configuration)
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public async Task<User?> CreateAdminAsync(string email, string password)
+    public async Task<ServiceResult<AdminResponse>> CreateAdminAsync(string email, string password)
     {
         email = email.Trim().ToLowerInvariant();
-        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@')) return null;
-        if (await context.Users.AnyAsync(u => u.Email == email)) return null;
+
+        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
+            return ServiceResult<AdminResponse>.Fail(ServiceErrorType.Validation, "Invalid email address");
+
+        if (await context.Users.AnyAsync(u => u.Email == email))
+            return ServiceResult<AdminResponse>.Fail(ServiceErrorType.Conflict, "Email is already taken");
 
         var user = new User { Email = email, Role = Role.Admin, CreatedAt = DateTime.UtcNow };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        return user;
+
+        var response = new AdminResponse
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Role = user.Role.ToString()
+        };
+
+        return ServiceResult<AdminResponse>.Ok(response);
     }
 }

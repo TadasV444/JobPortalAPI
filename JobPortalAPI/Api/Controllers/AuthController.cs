@@ -2,6 +2,7 @@
 using JobPortalAPI.Api.Models.Requests;
 using JobPortalAPI.Api.Models.Responses;
 using JobPortalAPI.Core.Entities;
+using JobPortalAPI.Core.Enums;
 using JobPortalAPI.Core.Interfaces;
 using JobPortalAPI.Infractructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,8 +27,8 @@ public class AuthController(IAuthService authService) : ControllerBase
                 errors: ["Candidate already exists"]
             );
         }
-        
-        return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse,"Candidate registration successful"));
+
+        return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse, "Candidate registration successful"));
     }
 
     [HttpPost("register-employer")]
@@ -44,7 +45,6 @@ public class AuthController(IAuthService authService) : ControllerBase
         }
 
         return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse, "Employer registration successful"));
-
     }
 
     [HttpPost("login")]
@@ -59,8 +59,10 @@ public class AuthController(IAuthService authService) : ControllerBase
                 errors: ["User already exists"]
             );
         }
+
         return Ok(ApiResponse<TokenResponse>.CreateSuccess(tokenResponse, "User logged in successfully"));
     }
+
     [HttpPost("refresh-token")]
     public async Task<ActionResult<ApiResponse<TokenResponse>>> RefreshToken(RefreshTokenRequest request)
     {
@@ -88,6 +90,21 @@ public class AuthController(IAuthService authService) : ControllerBase
             message: "Successfully accessed authenticated endpoint"
         ));
     }
-    
-    
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("register-admin")]
+    public async Task<ActionResult<ApiResponse<AdminResponse>>> CreateAdmin(RegisterAdminRequest request)
+    {
+        var result = await authService.CreateAdminAsync(request.Email, request.Password);
+        if (!result.IsSuccess)
+        {
+            return result.ErrorType switch
+            {
+                ServiceErrorType.Conflict   => this.ConflictResponse<AdminResponse>(result.ErrorMessage!),
+                _                           => this.BadRequestResponse<AdminResponse>(result.ErrorMessage!)
+            };
+        }
+
+        return Ok(ApiResponse<AdminResponse>.CreateSuccess(result.Data!, "Admin created successfully"));
+    }
 }
