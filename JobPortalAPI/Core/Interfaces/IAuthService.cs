@@ -11,5 +11,5 @@ public interface IAuthService
     Task<AuthResponse?> RegisterEmployerAsync(RegisterEmployerRequest request);
     Task<TokenResponse?> LoginAsync(LoginRequest request);
     Task<TokenResponse?> RefreshTokenAsync(RefreshTokenRequest request);
-    Task<ServiceResult<AdminResponse>> CreateAdminAsync(string email, string password);
+    Task<ServiceResult<AdminUserResponse>> CreateAdminAsync(string email, string password);
 }

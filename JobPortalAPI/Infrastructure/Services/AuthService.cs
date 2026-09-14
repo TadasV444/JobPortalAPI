@@ -208,28 +208,28 @@ public class AuthService(JobPortalContext context, IConfiguration configuration)
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public async Task<ServiceResult<AdminResponse>> CreateAdminAsync(string email, string password)
+    public async Task<ServiceResult<AdminUserResponse>> CreateAdminAsync(string email, string password)
     {
         email = email.Trim().ToLowerInvariant();
 
         if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
-            return ServiceResult<AdminResponse>.Fail(ServiceErrorType.Validation, "Invalid email address");
+            return ServiceResult<AdminUserResponse>.Fail(ServiceErrorType.Validation, "Invalid email address");
 
         if (await context.Users.AnyAsync(u => u.Email == email))
-            return ServiceResult<AdminResponse>.Fail(ServiceErrorType.Conflict, "Email is already taken");
+            return ServiceResult<AdminUserResponse>.Fail(ServiceErrorType.Conflict, "Email is already taken");
 
         var user = new User { Email = email, Role = Role.Admin, CreatedAt = DateTime.UtcNow };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        var response = new AdminResponse
+        var response = new AdminUserResponse
         {
             Id = user.Id,
             Email = user.Email,
             Role = user.Role.ToString()
         };
 
-        return ServiceResult<AdminResponse>.Ok(response);
+        return ServiceResult<AdminUserResponse>.Ok(response);
     }
 }

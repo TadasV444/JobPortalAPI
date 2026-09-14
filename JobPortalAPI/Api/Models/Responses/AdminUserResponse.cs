@@ -1,6 +1,6 @@
 ﻿namespace JobPortalAPI.Api.Models.Responses;
 
-public class AdminResponse
+public class AdminUserResponse
 {
     public int Id { get; set; } 
     public string Email { get; set; } = string.Empty;

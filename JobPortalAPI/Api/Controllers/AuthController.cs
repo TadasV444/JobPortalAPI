@@ -93,18 +93,18 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpPost("register-admin")]
-    public async Task<ActionResult<ApiResponse<AdminResponse>>> CreateAdmin(RegisterAdminRequest request)
+    public async Task<ActionResult<ApiResponse<AdminUserResponse>>> CreateAdmin(RegisterAdminRequest request)
     {
         var result = await authService.CreateAdminAsync(request.Email, request.Password);
         if (!result.IsSuccess)
         {
             return result.ErrorType switch
             {
-                ServiceErrorType.Conflict   => this.ConflictResponse<AdminResponse>(result.ErrorMessage!),
-                _                           => this.BadRequestResponse<AdminResponse>(result.ErrorMessage!)
+                ServiceErrorType.Conflict   => this.ConflictResponse<AdminUserResponse>(result.ErrorMessage!),
+                _                           => this.BadRequestResponse<AdminUserResponse>(result.ErrorMessage!)
             };
         }
 
-        return Ok(ApiResponse<AdminResponse>.CreateSuccess(result.Data!, "Admin created successfully"));
+        return Ok(ApiResponse<AdminUserResponse>.CreateSuccess(result.Data!, "Admin created successfully"));
     }
 }
