@@ -3,5 +3,6 @@
 public enum ServiceErrorType
 {
     NotFound = 1,
-    Conflict = 2
+    Conflict = 2,
+    Validation = 3
 }
